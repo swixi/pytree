@@ -25,20 +25,43 @@ if len(args) == 1:
 else:
     path = args[1]
 
-print("Path", path)
+print("PATH", path)
+num_files = 0
 
 
-modified_path = path.replace('/','-')
-saved_file = open("tree_{}_.txt".format(modified_path), "w+")
-saved_file.write(path+"\n\n")
+#open a file to write
+modified_path = path.replace('/','_')
+saved_file = open("TREE_{}.txt".format(modified_path), "w+")
+saved_file.write("Tree at " + path + "\n\n")
 
-
-current_dir = os.listdir(path)
-for file in current_dir:
-    filename = os.fsdecode(file)
-    print(filename)
-    saved_file.write(filename + "\n")
+#recursively write the tree to saved_file
+def print_dir(path, saved_file):
+    is_dir = not os.path.isfile(path)
     
-    saved_file.write(str(os.path.isfile(path + "/" + filename)) + "\n")
+    #print(path, is_dir)
 
+    if( is_dir ):
+        
+        #get a list of the files in the path
+        current_dir = os.listdir(path)
+        for file in current_dir:
+            #print(file)
+            #filename = os.fsdecode(file)
+            #print(filename)
+            print_dir(path + "/" + file, saved_file)
+        
+        #saved_file.write(str(os.path.isfile(path + "/" + filename)) + "\n")
+    else:
+        global num_files
+        num_files += 1
+        saved_file.write(path + "\n")
+        
+
+    return
+
+
+print_dir(path, saved_file)
+
+saved_file.write("\n" + "Files: " + str(num_files))
 saved_file.close()
+
